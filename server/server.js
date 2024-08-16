@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user');
+const upstoxRoutes = require('./routes/upstox');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
@@ -14,9 +15,10 @@ app.use(bodyParser.json());
 
 const cspMiddleware = require('./middleware/csp');
 app.use(cspMiddleware);
+
 // Routes
 app.use('/api', userRoutes);
-
+app.use('/api/upstox', upstoxRoutes);
 // Connect to MongoDB
 connectDB();
 
