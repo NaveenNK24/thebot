@@ -11,6 +11,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
+const cspMiddleware = require('./middleware/csp');
+app.use(cspMiddleware);
 // Routes
 app.use('/api', userRoutes);
 
