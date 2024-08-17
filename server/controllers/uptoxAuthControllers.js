@@ -2,6 +2,7 @@
 const axios = require('axios');
 const qs = require('qs');
 const Token = require('../models/upstoxAuthToken')
+const jwt = require('jsonwebtoken');
 
 exports.authUpstox = (req, res) => {
     

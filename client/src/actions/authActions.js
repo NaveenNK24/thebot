@@ -1,4 +1,3 @@
-// actions/authActions.js
 import axios from 'axios';
 
 export const signup = (userData) => async (dispatch) => {
@@ -9,7 +8,7 @@ export const signup = (userData) => async (dispatch) => {
         'Content-Type': 'application/json',
       },
     });
-    // console.log(res.data,"success");
+    console.log(res.data,"success");
     dispatch({ type: 'SIGNUP_SUCCESS', payload: res.data });
   } catch (error) {
     dispatch({ type: 'SIGNUP_FAIL', payload: error.response.data });

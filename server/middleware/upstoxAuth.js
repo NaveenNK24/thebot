@@ -4,7 +4,7 @@ const authToken = async (req, res, next) => {
   console.log(req);
   
   try {
-    // const userId = req.user._id; // Assuming req.user is set after user authentication
+     const userId = req.user._id; // Assuming req.user is set after user authentication
 
     // Find the latest valid token for the current user
     // const tokenDoc = await Token.findOne({ userId }).sort({ expiresAt: -1 });

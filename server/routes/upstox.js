@@ -7,6 +7,6 @@ const authToken = require('../middleware/upstoxAuth')
 router.get('/auth',uptoxAuthControllers.authUpstox);
 router.get('/code',uptoxAuthControllers.handleUpstoxCallback);
 router.get('/historical-data',authToken,historicalData.historicalData);
-authToken
+// authToken
 
 module.exports = router;
