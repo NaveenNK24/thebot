@@ -1,4 +1,3 @@
-// src/redux/actions/dataActions.js
 import axios from 'axios';
 
 export const FETCH_DATA_REQUEST = 'FETCH_DATA_REQUEST';
@@ -9,7 +8,7 @@ export const fetchData = () => {
     return async (dispatch) => {
         dispatch({ type: FETCH_DATA_REQUEST });
         try {
-            const response = await axios.post('http://localhost:5005/api/upstox/historicaldata'
+            const response = await axios.post(`http://localhost:5005/api/upstox/historicaldata`
               );;
             dispatch({ type: FETCH_DATA_SUCCESS, payload: response.data });
         } catch (error) {

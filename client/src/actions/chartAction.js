@@ -14,20 +14,13 @@ export const fetchDataFailure = (error) => ({
   payload: error,
 });
 
-export const fetchData = () => {
-  return (dispatch) => {
+export const fetchData = (symbol) => {
+  return async (dispatch) => {
     dispatch(fetchDataRequest());
-    fetch("http://localhost:5005/api/binance/historical-data")
+    fetch(`http://localhost:5005/api/binance/historical-data/${symbol}`)
       .then(res => res.json())
       .then(data => {
-        const cdata = data.map(d => ({
-          time: d[0] / 1000,
-          open: parseFloat(d[1]),
-          high: parseFloat(d[2]),
-          low: parseFloat(d[3]),
-          close: parseFloat(d[4]),
-        }));
-        dispatch(fetchDataSuccess(cdata));
+        dispatch(fetchDataSuccess(data));
       })
       .catch(error => {
         dispatch(fetchDataFailure(error.message));
