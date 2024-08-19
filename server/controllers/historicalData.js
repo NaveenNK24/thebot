@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {sma_inc} = require('../../indicators/sma')
+const {sma_inc} = require('../indicators/sma')
 
 exports.historicalData = async (req, res) => {
     console.log("params",req.params)

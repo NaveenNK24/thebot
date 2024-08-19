@@ -17,7 +17,7 @@ export const fetchDataFailure = (error) => ({
 export const fetchData = (symbol) => {
   return async (dispatch) => {
     dispatch(fetchDataRequest());
-    fetch(`http://localhost:5005/api/binance/historical-data/${symbol}`)
+    fetch(`http://localhost:5005/api/historical-data/${symbol}`)
       .then(res => res.json())
       .then(data => {
         dispatch(fetchDataSuccess(data));
