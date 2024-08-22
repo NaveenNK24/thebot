@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { fetchData } from '../actions/chartAction.js';
+import { fetchData } from '../slices/chartSlice'; // Updated import path
 import { createChart } from 'lightweight-charts';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,14 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 const ChartComponent1 = () => {
   const dispatch = useDispatch();
   const { symbol } = useParams(); 
-  const { data, loading, error } = useSelector((state) => state.data);
+  // const { data, loading, error } = useSelector((state) => state.chart); // Updated to match the state slice
+  // const { data = [], loading = false, error = null } = useSelector((state) => state.data || {});
+
+  const loading = useSelector((state) => state.chart.loading);
+  const data = useSelector((state) => state.chart.data);
+  const error = useSelector((state) => state.chart.error);
 
   // Create a ref to store the chart instance
   const chartRef = useRef(null);
 
   useEffect(() => {
     if (symbol) {
-        dispatch(fetchData(symbol));
+      dispatch(fetchData(symbol));
     }
   }, [dispatch, symbol]);
 

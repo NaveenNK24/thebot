@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchData } from '../actions/historicalDataActions';
+import { fetchData } from '../slices/chartSlice';
 
 const Historicaldata = () => {
     const dispatch = useDispatch();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../actions/authActions';
+import { login } from '../slices/authSlice';
 import './Login.css';
 
 const Login = () => {
