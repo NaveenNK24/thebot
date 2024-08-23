@@ -3,8 +3,11 @@ const {sma_inc} = require('../indicators/sma')
 
 exports.historicalData = async (req, res) => {
     console.log("params",req.params)
+    console.log("params",req.query)
     // const { symbol = "ETHUSDT" } = req.params || {};
     const { symbol } = req.params || {};
+    // const { smaPeriod } = req.body;
+    const { smaPeriod } = req.query; 
     // const symbol = "ETHUSDT";
     const interval = '15m';
     // console.log("interval",interval,symbol)
@@ -12,7 +15,7 @@ exports.historicalData = async (req, res) => {
     const to = new Date().toISOString().split('T')[0];
 
     
-    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=1000`
+    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`
 
     try {
         const response = await axios.get(url)
@@ -26,7 +29,12 @@ exports.historicalData = async (req, res) => {
             close: parseFloat(d[4]),
           }));
           
-          cdata = await sma_inc(cdata)
+          // cdata = await sma_inc(cdata,smaPeriod)
+          if (isNaN(smaPeriod)) {
+            throw new Error('Invalid SMA period');
+          }
+          
+          cdata = await sma_inc(cdata, smaPeriod);
          
           res.json(cdata);
     } catch (error) {

@@ -5,13 +5,15 @@ const { promisify } = require('util');
 const sma_async = promisify(tulind.indicators.sma.indicator);
 
 
-const sma_inc = async (data) => {
+const sma_inc = async (data,period) => {
   // Extract close prices from the data
 
+  console.log(data,period);
+  
   const closePrices = data.map((d) => d.close);
 
   // Calculate the Simple Moving Average (SMA)
-  const results = await sma_async([closePrices], [10]);
+  const results = await sma_async([closePrices], [period]);
   const smaValues = results[0];
 
   // Calculate the difference in lengths between the original data and SMA values
@@ -25,7 +27,8 @@ const sma_inc = async (data) => {
 
   // Merge the SMA values back into the original data
   const updatedData = data.map((d, i) => ({ ...d, sma: combinedSmaValues[i] }));
-
+  console.log("updated",updatedData);
+  
   return updatedData;
 };
 

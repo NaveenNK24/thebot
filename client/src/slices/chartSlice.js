@@ -1,11 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Async thunk for fetching data
 export const fetchData = createAsyncThunk(
   'chart/fetchData',
-  async (symbol, { rejectWithValue }) => {
+  async ({ symbol, smaPeriod }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:5005/api/binance/historical-data/${symbol}`);
+      const response = await fetch(`http://localhost:5005/api/binance/historical-data/${symbol}?smaPeriod=${smaPeriod}`, {
+        method: 'GET', // Use GET method
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.text(); // Read error details
+        throw new Error(`Server Error: ${errorDetails}`);
+      }
+
       const data = await response.json();
       return data;
     } catch (error) {
@@ -13,6 +20,8 @@ export const fetchData = createAsyncThunk(
     }
   }
 );
+
+
 
 // Create slice
 const chartSlice = createSlice({

@@ -12,7 +12,7 @@ import chartSlice from "../slices/chartSlice";
 import authSlice from "../slices/authSlice";
 
 const store = configureStore({
-    devTools:false,
+    devTools:true,
     reducer: {
         chart: chartSlice,
         authSlice
