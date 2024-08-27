@@ -1,23 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchData } from '../slices/chartSlice';
-import { createChart } from 'lightweight-charts';
+import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ChartComponent1 = () => {
   const dispatch = useDispatch();
   const { symbol } = useParams();
-  const { data, loading, error } = useSelector((state) => state.chart);
+  const { data = [], loading, error } = useSelector((state) => state.chart);
 
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
-  const smaSeriesRef = useRef(null);
 
   const [showSMA, setShowSMA] = useState(true);
   const [smaPeriod, setSmaPeriod] = useState(10); // Default SMA period
 
   useEffect(() => {
-    if (symbol && smaPeriod) dispatch(fetchData({ symbol, smaPeriod })); // Pass SMA period to fetchData
+    if (symbol && smaPeriod) {
+      dispatch(fetchData({ symbol, smaPeriod })); // Pass SMA period to fetchData
+    }
   }, [dispatch, symbol, smaPeriod]);
 
   useEffect(() => {
@@ -27,7 +28,31 @@ const ChartComponent1 = () => {
     if (!chartRef.current) {
       const domElement = document.getElementById('tvchart');
       chartRef.current = createChart(domElement, {
-        timeScale: { timeVisible: true, secondsVisible: true },
+        timeScale: { 
+          timeVisible: true, 
+          secondsVisible: true,
+          borderVisible: true,  
+        },
+        grid: {
+          vertLines: {
+            color: 'transparent',
+          },
+          horzLines: {
+            color: '#f0f3fa',
+          },
+        },
+        crosshair: {
+          mode: CrosshairMode.Normal, 
+          vertLine: {
+            width: 1,
+            color: "#9B7DFF",
+            labelBackgroundColor: "#9B7DFF",
+          },
+          horzLine: {
+            color: "#9B7DFF",
+            labelBackgroundColor: "#9B7DFF",
+          },
+        },
       });
 
       candleSeriesRef.current = chartRef.current.addCandlestickSeries();
@@ -35,18 +60,109 @@ const ChartComponent1 = () => {
 
     candleSeriesRef.current.setData(data);
 
-    // Remove SMA series if it exists
-    if (smaSeriesRef.current) {
-      chartRef.current.removeSeries(smaSeriesRef.current);
-      smaSeriesRef.current = null;
-    }
+    // Function to create and plot a line series for any given data
+    const plotLineSeries = (color, lineWidth, lineStyle, filterKey, priceLineVisible) => {
+      const series = chartRef.current.addLineSeries({ color, lineWidth, lineStyle, priceLineVisible });
+      const seriesData = data.filter(d => d[filterKey]).map(d => ({ time: d.time, value: d[filterKey] }));
+      series.setData(seriesData);
+    };
 
-    // Add SMA series if showSMA is true and data is valid
-    if (showSMA && data.length) {
-      smaSeriesRef.current = chartRef.current.addLineSeries({ color: 'red', lineWidth: 1 });
-      const smaData = data.filter(d => d.sma).map(d => ({ time: d.time, value: d.sma }));
-      smaSeriesRef.current.setData(smaData);
-    }
+    // Plot all pivot points, support, and resistance levels
+    plotLineSeries('blue', 2, LineStyle.Dotted, 'pivot', false); 
+    plotLineSeries('blue', 2, LineStyle.Dotted, 'toppivot', false); 
+    plotLineSeries('blue', 2, LineStyle.Dotted, 'bottompivot', false); 
+
+    plotLineSeries('green', 2, LineStyle.Dotted, 'r1', false); 
+    plotLineSeries('green', 2, LineStyle.Dotted, 'r2', false); 
+    plotLineSeries('green', 2, LineStyle.Dotted, 'r3', false); 
+    plotLineSeries('green', 2, LineStyle.Dotted, 'r4', false); 
+
+    plotLineSeries('red', 2, LineStyle.Dotted, 's1', false); 
+    plotLineSeries('red', 2, LineStyle.Dotted, 's2', false); 
+    plotLineSeries('red', 2, LineStyle.Dotted, 's3', false); 
+    plotLineSeries('red', 2, LineStyle.Dotted, 's4', false); 
+
+    plotLineSeries('green', 1, LineStyle.Solid, 'ema1', false); 
+    plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
+    plotLineSeries('blue', 2, LineStyle.Solid, 'sma1', false); 
+
+    // Combine markers into a single setMarkers call
+    const markers = data
+      .flatMap(d => [
+        d.long ? {
+          time: d.time,
+          position: 'belowBar',
+          color: 'green',
+          shape: 'arrowUp',
+          text: 'LONG',
+        } : null,
+        d.short ? {
+          time: d.time,
+          position: 'aboveBar',
+          color: 'red',
+          shape: 'arrowDown',
+          text: 'SHORT',
+        } : null,
+        d.WRSignal === 'Long' ? {
+          time: d.time,
+          position: 'belowBar',
+          color: 'green',
+          shape: 'arrowUp',
+          text: 'WR L',
+        } : d.WRSignal === 'Short' ? {
+          time: d.time,
+          position: 'aboveBar',
+          color: 'red',
+          shape: 'arrowDown',
+          text: 'WR S',
+        } : null,
+        d.ERSignal === 'Long' ? {
+          time: d.time,
+          position: 'belowBar',
+          color: 'green',
+          shape: 'arrowUp',
+          text: 'ER L',
+        } : d.ERSignal === 'Short' ? {
+          time: d.time,
+          position: 'aboveBar',
+          color: 'red',
+          shape: 'arrowDown',
+          text: 'ER S',
+        } : null,
+        d.doji === 'Long' ? {
+          time: d.time,
+          position: 'belowBar',
+          color: 'green',
+          shape: 'arrowUp',
+          text: 'D L',
+        } : d.doji === 'Short' ? {
+          time: d.time,
+          position: 'aboveBar',
+          color: 'red',
+          shape: 'arrowDown',
+          text: 'D S',
+        } : null
+      ])
+      .filter(Boolean);
+
+    candleSeriesRef.current.setMarkers(markers);
+
+    // Crosshair move handler
+    const myCrosshairMoveHandler = (param) => {
+      if (!param.point) return;
+
+      console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+    };
+
+    // Subscribe to crosshair move
+    chartRef.current.subscribeCrosshairMove(myCrosshairMoveHandler);
+
+    // Unsubscribe from crosshair move on cleanup
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.unsubscribeCrosshairMove(myCrosshairMoveHandler);
+      }
+    };
 
   }, [data, showSMA]);
 
@@ -61,7 +177,7 @@ const ChartComponent1 = () => {
 
   return (
     <div>
-      <button onClick={toggleSMA}>
+      {/* <button onClick={toggleSMA}>
         {showSMA ? 'Hide SMA' : 'Show SMA'}
       </button>
       <input
@@ -70,7 +186,7 @@ const ChartComponent1 = () => {
         onChange={handlePeriodChange}
         min="1"
         style={{ marginLeft: '10px' }}
-      />
+      /> */}
       <div id="tvchart" style={{ height: '700px' }}></div>
     </div>
   );

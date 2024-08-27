@@ -1,43 +1,63 @@
 const axios = require('axios');
-const {sma_inc} = require('../indicators/sma')
+const { sma_inc } = require('../indicators/sma');
+const { ema_inc } = require('../indicators/ema');
+const { markers_inc } = require('../indicators/marker');
+const { calculatePivotLevels } = require('../indicators/cpr');
+const { calculateWRSignals } = require('../indicators/WickReversalSignal');
+const { calculateERSignal } = require('../indicators/ExpReversalSignal');
+const { calculateDojiSignal } = require('../indicators/doji');
 
 exports.historicalData = async (req, res) => {
-    console.log("params",req.params)
-    console.log("params",req.query)
-    // const { symbol = "ETHUSDT" } = req.params || {};
     const { symbol } = req.params || {};
-    // const { smaPeriod } = req.body;
     const { smaPeriod } = req.query; 
-    // const symbol = "ETHUSDT";
+    const emaPeriod = 20;
     const interval = '15m';
-    // console.log("interval",interval,symbol)
     const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 1 month ago
     const to = new Date().toISOString().split('T')[0];
 
-    
-    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`
+    const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=1000`;
 
     try {
-        const response = await axios.get(url)
-          // console.log(response);
-        
-        let cdata = await response.data.map(d => ({
-            time: d[0] / 1000,
-            open: parseFloat(d[1]),
-            high: parseFloat(d[2]),
-            low: parseFloat(d[3]),
-            close: parseFloat(d[4]),
-          }));
-          
-          // cdata = await sma_inc(cdata,smaPeriod)
-          if (isNaN(smaPeriod)) {
+        const response = await axios.get(url);
+
+        let cdata = await response.data.map(d => {
+            const utcTime = d[0] / 1000; // Original UTC time in seconds
+            const istOffset = 5.5 * 60 * 60; // IST offset in seconds
+            const istTime = utcTime + istOffset; // Convert UTC to IST
+
+            return {
+                time: utcTime,
+                open: parseFloat(d[1]),
+                high: parseFloat(d[2]),
+                low: parseFloat(d[3]),
+                close: parseFloat(d[4]),
+            };
+        });
+
+        if (isNaN(smaPeriod)) {
             throw new Error('Invalid SMA period');
-          }
+        }
+
+        cdata = await sma_inc(cdata, 20,"sma1");
+        cdata = await sma_inc(cdata, 10,"sma10");
+
+          cdata = await ema_inc(cdata, 8,"ema1");
+          cdata = await ema_inc(cdata, 14,"ema2");
+
+          cdata = calculateWRSignals(cdata)
+          // cdata = calculateDojiSignal(cdata) //  don't use
+           cdata = calculateERSignal(cdata)
+           
           
-          cdata = await sma_inc(cdata, smaPeriod);
-         
-          res.json(cdata);
+          //  console.log("cdata",cdata[15]);
+          // cdata = markers_inc(cdata); //  don't use
+            // console.log("cdata",cdata[15]);
+
+        cdata = calculatePivotLevels(cdata);
+        // console.log("cdata p", cdata.filter((d)=> d.doji !== null));
+
+        res.json(cdata);
     } catch (error) {
-        res.status(error.response ? error.response.status : 500).json(error.response ? error.response.data : { error: 'An error occurred' });
+        res.status(error.response ? error.response.status : 500).json(error.response ? error.response.data : { error: 'Historical data.js, An error occurred' });
     }
 };
