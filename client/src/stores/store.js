@@ -10,12 +10,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import chartSlice from "../slices/chartSlice";
 import authSlice from "../slices/authSlice";
+import upstoxChartSlice from "../slices/upstoxChartSlice";
 
 const store = configureStore({
     devTools:true,
     reducer: {
         chart: chartSlice,
-        authSlice
+        authSlice,
+        upstoxChartSlice
     }
 })
 

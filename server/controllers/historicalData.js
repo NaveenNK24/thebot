@@ -6,6 +6,7 @@ const { calculatePivotLevels } = require('../indicators/cpr');
 const { calculateWRSignals } = require('../indicators/WickReversalSignal');
 const { calculateERSignal } = require('../indicators/ExpReversalSignal');
 const { calculateDojiSignal } = require('../indicators/doji');
+const { calculatePOC_VAH_VAL } = require('../indicators/vahval');
 
 exports.historicalData = async (req, res) => {
     const { symbol } = req.params || {};
@@ -31,6 +32,7 @@ exports.historicalData = async (req, res) => {
                 high: parseFloat(d[2]),
                 low: parseFloat(d[3]),
                 close: parseFloat(d[4]),
+                volume: parseFloat(d[6]),
             };
         });
 
@@ -44,9 +46,9 @@ exports.historicalData = async (req, res) => {
           cdata = await ema_inc(cdata, 8,"ema1");
           cdata = await ema_inc(cdata, 14,"ema2");
 
-          cdata = calculateWRSignals(cdata)
+        //   cdata = calculateWRSignals(cdata)
           // cdata = calculateDojiSignal(cdata) //  don't use
-           cdata = calculateERSignal(cdata)
+        //    cdata = calculateERSignal(cdata)
            
           
           //  console.log("cdata",cdata[15]);
@@ -54,6 +56,9 @@ exports.historicalData = async (req, res) => {
             // console.log("cdata",cdata[15]);
 
         cdata = calculatePivotLevels(cdata);
+
+        // cdata = calculatePOC_VAH_VAL(cdata) //don't use
+        console.log("cdata",cdata[100]);
         // console.log("cdata p", cdata.filter((d)=> d.doji !== null));
 
         res.json(cdata);

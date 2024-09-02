@@ -33,6 +33,8 @@ const calculatePivotLevels = (data) => {
     // Aggregate intraday data to daily OHLC data
     const dailyData = aggregateToDailyData(data);
 
+
+
     // Process each day in the dataset
     return dailyData.flatMap((currentDay, index) => {
         if (index === 0) return currentDay.entries; // Skip the first day since there's no previous day to calculate pivot levels

@@ -21,6 +21,7 @@ const ChartComponent1 = () => {
     }
   }, [dispatch, symbol, smaPeriod]);
 
+
   useEffect(() => {
     if (!data.length) return;
 
@@ -68,23 +69,27 @@ const ChartComponent1 = () => {
     };
 
     // Plot all pivot points, support, and resistance levels
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'pivot', false); 
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'toppivot', false); 
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'bottompivot', false); 
+    plotLineSeries('blue', 0.5, LineStyle.Solid, 'pivot', false); 
+    plotLineSeries('blue', 0.5, LineStyle.Solid, 'toppivot', false); 
+    plotLineSeries('blue', 0.5, LineStyle.Solid, 'bottompivot', false); 
 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r1', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r2', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r3', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r4', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r1', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r2', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r3', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r4', false); 
 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's1', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's2', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's3', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's4', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's1', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's2', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's3', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's4', false); 
 
     plotLineSeries('green', 1, LineStyle.Solid, 'ema1', false); 
     plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
-    plotLineSeries('blue', 2, LineStyle.Solid, 'sma1', false); 
+    plotLineSeries('violet', 2, LineStyle.Solid, 'sma1', false); 
+
+    plotLineSeries('green', 2, LineStyle.Solid, 'vah', false); 
+    plotLineSeries('red', 2, LineStyle.Solid, 'val', false); 
+    plotLineSeries('blue', 2, LineStyle.Solid, 'poc', false); 
 
     // Combine markers into a single setMarkers call
     const markers = data
