@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Alert, Card, InputGroup, Spinner } from 'react-bootstrap';
 import { login } from '../slices/authSlice';
-import './Login.css';
+import { Envelope, Lock, BoxArrowInRight } from 'react-bootstrap-icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -28,73 +28,75 @@ const Login = () => {
   };
 
   return (
-    <div className="min-vh-100 bg-light">
-      <Container fluid className="h-100 d-flex flex-column">
-        <header className="d-flex align-items-center justify-content-between border-bottom py-3 px-4">
-          <div className="d-flex align-items-center gap-2">
-            <div className="logo-placeholder"></div>
-            <h2 className="mb-0 fw-bold">SecureAuth</h2>
+    <Container fluid className="vh-100 d-flex align-items-center justify-content-center bg-light">
+      <Card className="shadow-lg" style={{ maxWidth: '400px', width: '100%' }}>
+        <Card.Body className="p-5">
+          <div className="text-center mb-4">
+            <div className="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style={{ width: '60px', height: '60px' }}>
+              <BoxArrowInRight size={30} color="white" />
+            </div>
+            <h2 className="mt-3 mb-0 fw-bold">Login</h2>
           </div>
-        </header>
-        <Row className="flex-grow-1 justify-content-center align-items-center">
-          <Col xs={12} md={6} lg={4}>
-            <h1 className="text-center mb-4">Welcome Back</h1>
-            {error && <Alert variant="danger">{error}</Alert>}
-            <Form onSubmit={handleSubmit}>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email</Form.Label>
+
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email</Form.Label>
+              <InputGroup>
+                <InputGroup.Text><Envelope /></InputGroup.Text>
                 <Form.Control
                   type="email"
-                  placeholder="example@gmail.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="custom-input"
                   autoComplete="username"
                 />
-              </Form.Group>
+              </InputGroup>
+            </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <InputGroup>
+                <InputGroup.Text><Lock /></InputGroup.Text>
                 <Form.Control
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="custom-input"
                   autoComplete="current-password"
                 />
-              </Form.Group>
+              </InputGroup>
+            </Form.Group>
 
-              <div className="text-end mb-3">
-                <Link to="/forgot-password" className="text-muted text-decoration-underline">Forgot password?</Link>
-              </div>
-
-              <div className="d-grid gap-2">
-                <Button 
-                  variant="primary" 
-                  type="submit" 
-                  disabled={isLoading} 
-                  className="custom-button"
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Logging in...
-                    </>
-                  ) : 'Login'}
-                </Button>
-              </div>
-            </Form>
-            <p className="text-center text-muted mt-3">Don't have an account?</p>
-            <div className="d-grid gap-2">
-              <Link to="/signup" className="btn btn-outline-secondary custom-button">Sign up</Link>
+            <div className="text-end mb-3">
+              <Link to="/forgot-password" className="text-decoration-none">Forgot password?</Link>
             </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+
+            <Button 
+              variant="primary" 
+              type="submit" 
+              className="w-100 py-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Logging in...
+                </>
+              ) : 'Login'}
+            </Button>
+          </Form>
+
+          <div className="text-center mt-4">
+            <p className="text-muted mb-0">Don't have an account?</p>
+            <Link to="/signup" className="btn btn-link">Sign up</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

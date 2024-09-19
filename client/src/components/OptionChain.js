@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchOptionChain } from '../slices/optionChainSlice';
 import { Container, Row, Col, Card, Table, Spinner, Alert, Badge } from 'react-bootstrap';
-import './OptionChain.css';
+
 
 const OptionChain = () => {
   const dispatch = useDispatch();
