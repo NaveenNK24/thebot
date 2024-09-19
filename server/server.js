@@ -13,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-
 const cspMiddleware = require('./middleware/csp');
 app.use(cspMiddleware);
 
@@ -21,9 +20,17 @@ app.use(cspMiddleware);
 app.use('/api', userRoutes);
 app.use('/api/upstox', upstoxRoutes);
 app.use('/api/binance', binanceRoutes);
+
+
 // Connect to MongoDB
 connectDB();
 
 // Start the server
 const PORT = process.env.PORT || 5005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Add option chain route
+// const optionChainController = require('./upstoxTrade/FO/optionchain');
+
+// ... other routes ...
+

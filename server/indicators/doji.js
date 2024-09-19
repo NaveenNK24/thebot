@@ -8,7 +8,7 @@ const calculateDojiSignal = (data, percentage = 0.10) => {
       const prev = arr[i - 1];
       const prev2 = arr[i - 2];
 
-      console.log(prev,prev2);
+      // console.log(prev,prev2);
       
       
       const fRangeHL = prev.high - prev.low;

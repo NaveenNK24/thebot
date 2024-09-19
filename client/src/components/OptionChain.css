@@ -1,0 +1,37 @@
+.option-chain-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+  
+  .table-responsive {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  table {
+    font-size: 0.9rem;
+  }
+  
+  .strike-price {
+    font-weight: bold;
+    background-color: #e9ecef;
+  }
+  
+  .greeks {
+    font-size: 0.8rem;
+  }
+  
+  .greeks div {
+    padding: 2px 0;
+  }
+  
+  .selected-row {
+    background-color: #e2e6ea !important;
+  }
+  
+  thead th {
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
+    z-index: 1;
+  }

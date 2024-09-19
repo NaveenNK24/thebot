@@ -49,6 +49,10 @@ const calculatePivotLevels = (data) => {
         const bottomPivot = (prevHigh + prevLow) / 2; // Bottom Central Pivot (BC)
         const topPivot = ((pivot-bottomPivot) + pivot); // Top Central Pivot (TC)
 
+        // console.log("diff of CP-TP",pivot - topPivot);
+        // console.log("diff of CP-BP",pivot - bottomPivot);
+        // console.log("diff of TP-BP",topPivot - bottomPivot);
+
         // Calculate additional support (S1, S2, S3, S4) and resistance (R1, R2, R3, R4) levels
         const r1 = 2 * pivot - prevLow;
         const s1 = 2 * pivot - prevHigh;

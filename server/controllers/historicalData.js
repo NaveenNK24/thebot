@@ -22,6 +22,10 @@ exports.historicalData = async (req, res) => {
         const response = await axios.get(url);
 
         let cdata = await response.data.map(d => {
+            // console.log(d[0]);
+            const testdate = new Date(d[0]);
+            // console.log(testdate);
+            
             const utcTime = d[0] / 1000; // Original UTC time in seconds
             const istOffset = 5.5 * 60 * 60; // IST offset in seconds
             const istTime = utcTime + istOffset; // Convert UTC to IST
@@ -32,9 +36,12 @@ exports.historicalData = async (req, res) => {
                 high: parseFloat(d[2]),
                 low: parseFloat(d[3]),
                 close: parseFloat(d[4]),
-                volume: parseFloat(d[6]),
+                volume: parseFloat(d[5]),
             };
         });
+
+        // console.log(cdata);
+        
 
         if (isNaN(smaPeriod)) {
             throw new Error('Invalid SMA period');
@@ -47,18 +54,18 @@ exports.historicalData = async (req, res) => {
           cdata = await ema_inc(cdata, 14,"ema2");
 
         //   cdata = calculateWRSignals(cdata)
-          // cdata = calculateDojiSignal(cdata) //  don't use
+        //   cdata = calculateDojiSignal(cdata) //  don't use
         //    cdata = calculateERSignal(cdata)
            
           
           //  console.log("cdata",cdata[15]);
-          // cdata = markers_inc(cdata); //  don't use
+          cdata = markers_inc(cdata); //  don't use
             // console.log("cdata",cdata[15]);
 
         cdata = calculatePivotLevels(cdata);
 
-        // cdata = calculatePOC_VAH_VAL(cdata) //don't use
-        console.log("cdata",cdata[100]);
+        cdata = calculatePOC_VAH_VAL(cdata) //don't use
+        // console.log("cdata",cdata[100]);
         // console.log("cdata p", cdata.filter((d)=> d.doji !== null));
 
         res.json(cdata);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchData } from '../slices/chartSlice';
-import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
+import { createChart, CrosshairMode, LineStyle, LineType } from 'lightweight-charts';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,6 +11,7 @@ const ChartComponent1 = () => {
 
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
+  const histogramSeriesRef = useRef(null);
 
   const [showSMA, setShowSMA] = useState(true);
   const [smaPeriod, setSmaPeriod] = useState(10); // Default SMA period
@@ -57,21 +58,55 @@ const ChartComponent1 = () => {
       });
 
       candleSeriesRef.current = chartRef.current.addCandlestickSeries();
+
+      candleSeriesRef.current.applyOptions({
+        wickUpColor: "#089981",
+        upColor: "#089981",
+        wickDownColor: "#000000",
+        downColor: "#000000",
+        borderVisible: false,
+      });
+      // histogramSeriesRef.current = chartRef.current.addHistogramSeries({ color: 'red' });
     }
 
     candleSeriesRef.current.setData(data);
 
+
+    histogramSeriesRef.current = chartRef.current.addHistogramSeries({
+      // color: '#26a69a',
+      priceFormat: {
+          type: 'volume',
+      },
+      priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+      // set the positioning of the volume series
+      scaleMargins: {
+          top: 0.7, // highest point of the series will be 70% away from the top
+          bottom: 0,
+      },
+  });
+  histogramSeriesRef.current.priceScale().applyOptions({
+      scaleMargins: {
+          top: 0.7, // highest point of the series will be 70% away from the top
+          bottom: 0,
+      },
+  });
+    const histogramData = data.map(d => ({ time: d.time, value: d.volume, color: d.open>d.close?"#fd4040":"#089981" }));
+     histogramSeriesRef.current.setData(histogramData);
+
     // Function to create and plot a line series for any given data
-    const plotLineSeries = (color, lineWidth, lineStyle, filterKey, priceLineVisible) => {
-      const series = chartRef.current.addLineSeries({ color, lineWidth, lineStyle, priceLineVisible });
+    const plotLineSeries = (color, lineWidth, lineStyle, filterKey, priceLineVisible,lineType) => {
+      const series = chartRef.current.addLineSeries({ color, lineWidth, lineStyle, priceLineVisible ,lineType});
       const seriesData = data.filter(d => d[filterKey]).map(d => ({ time: d.time, value: d[filterKey] }));
       series.setData(seriesData);
     };
 
+   
+    
+
     // Plot all pivot points, support, and resistance levels
-    plotLineSeries('blue', 0.5, LineStyle.Solid, 'pivot', false); 
-    plotLineSeries('blue', 0.5, LineStyle.Solid, 'toppivot', false); 
-    plotLineSeries('blue', 0.5, LineStyle.Solid, 'bottompivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'pivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'toppivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'bottompivot', false); 
 
     plotLineSeries('green', 0.5, LineStyle.Solid, 'r1', false); 
     plotLineSeries('green', 0.5, LineStyle.Solid, 'r2', false); 
@@ -87,9 +122,9 @@ const ChartComponent1 = () => {
     plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
     plotLineSeries('violet', 2, LineStyle.Solid, 'sma1', false); 
 
-    plotLineSeries('green', 2, LineStyle.Solid, 'vah', false); 
-    plotLineSeries('red', 2, LineStyle.Solid, 'val', false); 
-    plotLineSeries('blue', 2, LineStyle.Solid, 'poc', false); 
+    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
+    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
+    plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
 
     // Combine markers into a single setMarkers call
     const markers = data
@@ -156,7 +191,22 @@ const ChartComponent1 = () => {
     const myCrosshairMoveHandler = (param) => {
       if (!param.point) return;
 
-      console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+      // console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+       const firstEntry = param.seriesData.entries().next().value
+
+       if(firstEntry) {
+            // Access open, high, close from the value object
+            const [key, value] = firstEntry;
+            const Vopen = value.open;
+            const Vhigh = value.high;
+            const Vclose = value.close;
+            const Vlow = value.low
+              console.log(Vopen,Vhigh,Vlow,Vclose);
+       }
+
+
+  
+      
     };
 
     // Subscribe to crosshair move

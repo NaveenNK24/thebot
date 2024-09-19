@@ -21,7 +21,26 @@ export const fetchData = createAsyncThunk(
   }
 );
 
+export const fetchHistoricalData = createAsyncThunk(
+  'upstoxChart/fetchHistoricalData',
+  async (strikePrice, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:5005/api/upstox/historical-data/${strikePrice}`, {
+        method: 'GET',
+      });
 
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Server Error: ${errorDetails}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 // Create slice
 const upstoxChartSlice = createSlice({
@@ -43,6 +62,18 @@ const upstoxChartSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(fetchData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchHistoricalData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchHistoricalData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchHistoricalData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

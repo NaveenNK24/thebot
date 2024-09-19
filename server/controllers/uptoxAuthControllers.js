@@ -34,15 +34,16 @@ exports.authUpstox = (req, res) => {
             }
         });
 
-        console.log(response);
+        // console.log(response);
         
          const { access_token } = response.data;
-         console.log(access_token);
+
+        //  console.log(access_token);
         //  const expiresAt = new Date(Date.now() + expires_in * 1000);
 
         // // Store tokens in the database
-        const tokenDoc = new Token({ accessToken: access_token });
-        await tokenDoc.save();
+        // const tokenDoc = new Token({ accessToken: access_token });
+        // await tokenDoc.save();
 
         // Send tokens as a response
         res.json({

@@ -1,12 +1,10 @@
+
+
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchData } from '../slices/upstoxChartSlice';
-import { createChart, CrosshairMode, LineStyle } from 'lightweight-charts';
+import { createChart, CrosshairMode, LineStyle, LineType } from 'lightweight-charts';
 // import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-// import React, { useEffect, useRef, useState } from 'react';
-
-// import { useDispatch, useParams, useSelector, useRef, useState, useEffect } from 'react';
 
 const UpstoxChart = () => {
   const dispatch = useDispatch();
@@ -15,22 +13,35 @@ const UpstoxChart = () => {
 
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
+  const histogramSeriesRef = useRef(null);
+
+  // const [chartData, setChartData] = useState(null);
 
   const [showSMA, setShowSMA] = useState(true);
 //   const [smaPeriod, setSmaPeriod] = useState(10); // Default SMA period
 
+useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await dispatch(fetchData()); // Call the Redux action here
+        if (response && response.payload) {  // Assuming response contains a payload
+        //   setChartData(response.payload);
+        } else {
+          throw new Error("Data not received properly");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchChartData(); // Now calling fetchChartData, not fetchData
+}, [dispatch]);
+
+  
+
 
   useEffect(() => {
-    dispatch(fetchData()); 
-    console.log("test");
-    
-  }, [dispatch]);
-
-  useEffect(() => {
-    console.log(data);
     if (!data.length) return;
- 
-    console.log("test nn");
 
     // Create chart if not already created
     if (!chartRef.current) {
@@ -64,35 +75,73 @@ const UpstoxChart = () => {
       });
 
       candleSeriesRef.current = chartRef.current.addCandlestickSeries();
+
+      candleSeriesRef.current.applyOptions({
+        wickUpColor: "#089981",
+        upColor: "#089981",
+        wickDownColor: "#000000",
+        downColor: "#000000",
+        borderVisible: false,
+      });
+      // histogramSeriesRef.current = chartRef.current.addHistogramSeries({ color: 'red' });
     }
 
     candleSeriesRef.current.setData(data);
 
+
+    histogramSeriesRef.current = chartRef.current.addHistogramSeries({
+      // color: '#26a69a',
+      priceFormat: {
+          type: 'volume',
+      },
+      priceScaleId: '', // set as an overlay by setting a blank priceScaleId
+      // set the positioning of the volume series
+      scaleMargins: {
+          top: 0.7, // highest point of the series will be 70% away from the top
+          bottom: 0,
+      },
+  });
+  histogramSeriesRef.current.priceScale().applyOptions({
+      scaleMargins: {
+          top: 0.7, // highest point of the series will be 70% away from the top
+          bottom: 0,
+      },
+  });
+    const histogramData = data.map(d => ({ time: d.time, value: d.volume, color: d.open>d.close?"#fd4040":"#089981" }));
+     histogramSeriesRef.current.setData(histogramData);
+
     // Function to create and plot a line series for any given data
-    const plotLineSeries = (color, lineWidth, lineStyle, filterKey, priceLineVisible) => {
-      const series = chartRef.current.addLineSeries({ color, lineWidth, lineStyle, priceLineVisible });
+    const plotLineSeries = (color, lineWidth, lineStyle, filterKey, priceLineVisible,lineType) => {
+      const series = chartRef.current.addLineSeries({ color, lineWidth, lineStyle, priceLineVisible ,lineType});
       const seriesData = data.filter(d => d[filterKey]).map(d => ({ time: d.time, value: d[filterKey] }));
       series.setData(seriesData);
     };
 
+   
+    
+
     // Plot all pivot points, support, and resistance levels
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'pivot', false); 
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'toppivot', false); 
-    plotLineSeries('blue', 2, LineStyle.Dotted, 'bottompivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'pivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'toppivot', false); 
+    plotLineSeries('blue', 1.5, LineStyle.Solid, 'bottompivot', false); 
 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r1', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r2', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r3', false); 
-    plotLineSeries('green', 2, LineStyle.Dotted, 'r4', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r1', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r2', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r3', false); 
+    plotLineSeries('green', 0.5, LineStyle.Solid, 'r4', false); 
 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's1', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's2', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's3', false); 
-    plotLineSeries('red', 2, LineStyle.Dotted, 's4', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's1', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's2', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's3', false); 
+    plotLineSeries('red', 0.5, LineStyle.Solid, 's4', false); 
 
     plotLineSeries('green', 1, LineStyle.Solid, 'ema1', false); 
     plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
-    plotLineSeries('blue', 2, LineStyle.Solid, 'sma1', false); 
+    plotLineSeries('violet', 2, LineStyle.Solid, 'sma1', false); 
+
+    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
+    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
+    plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
 
     // Combine markers into a single setMarkers call
     const markers = data
@@ -159,7 +208,22 @@ const UpstoxChart = () => {
     const myCrosshairMoveHandler = (param) => {
       if (!param.point) return;
 
-      console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+      // console.log(`Crosshair moved to ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+       const firstEntry = param.seriesData.entries().next().value
+
+       if(firstEntry) {
+            // Access open, high, close from the value object
+            const [key, value] = firstEntry;
+            const Vopen = value.open;
+            const Vhigh = value.high;
+            const Vclose = value.close;
+            const Vlow = value.low
+              console.log(Vopen,Vhigh,Vlow,Vclose,key);
+       }
+
+
+  
+      
     };
 
     // Subscribe to crosshair move
@@ -174,11 +238,11 @@ const UpstoxChart = () => {
 
   }, [data, showSMA]);
 
-  const toggleSMA = () => setShowSMA(prev => !prev);
+  // const toggleSMA = () => setShowSMA(prev => !prev);
 
-  const handlePeriodChange = (e) => {
-    // setSmaPeriod(Number(e.target.value));
-  };
+  // const handlePeriodChange = (e) => {
+  //   // setSmaPeriod(Number(e.target.value));
+  // };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -201,3 +265,4 @@ const UpstoxChart = () => {
 };
 
 export default UpstoxChart;
+

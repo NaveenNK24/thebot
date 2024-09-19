@@ -175,6 +175,7 @@ const calculatePOC_VAH_VAL = (data, resolution = 1, valueAreaPercent = 0.68) => 
                 vah: prices[vahIndex],
                 val: prices[valIndex]
             };
+            // console.log("diff of vah-val",dailyLevels[date].vah-dailyLevels[date].val);
         }
     });
 
@@ -188,6 +189,7 @@ const calculatePOC_VAH_VAL = (data, resolution = 1, valueAreaPercent = 0.68) => 
             candle.vah = dailyLevels[previousDate].vah;
             candle.val = dailyLevels[previousDate].val;
         }
+        
 
         return candle;
     });
