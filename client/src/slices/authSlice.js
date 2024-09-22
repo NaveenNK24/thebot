@@ -1,10 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { jwtDecode } from 'jwt-decode'; 
+
+// Helper function to set token in localStorage
+const setToken = (token) => {
+  localStorage.setItem('token', token);
+};
+
+// Helper function to remove token from localStorage
+const removeToken = () => {
+  localStorage.removeItem('token');
+};
+
+// Helper function to check if token is expired
+const isTokenExpired = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+    return decoded.exp < Date.now() / 1000;
+  } catch (error) {
+    return true;
+  }
+};
 
 export const login = createAsyncThunk(
   'login',
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      // Replace with your login API call
       const response = await fetch('http://localhost:5005/api/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
@@ -13,7 +33,9 @@ export const login = createAsyncThunk(
         }
       });
       if (!response.ok) throw new Error('Login failed');
-      return await response.json();
+      const data = await response.json();
+      setToken(data.token); // Save token to localStorage
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -24,7 +46,6 @@ export const signup = createAsyncThunk(
   'signup',
   async (formData, { rejectWithValue }) => {
     try {
-      // Replace with your signup API call
       const response = await fetch('http://localhost:5005/api/signup', {
         method: 'POST',
         body: JSON.stringify(formData),
@@ -40,16 +61,35 @@ export const signup = createAsyncThunk(
   }
 );
 
+export const checkAuth = createAsyncThunk(
+  'checkAuth',
+  async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return rejectWithValue('No token found');
+    }
+    if (isTokenExpired(token)) {
+      removeToken();
+      return rejectWithValue('Token expired');
+    }
+    // You might want to validate the token with your backend here
+    return jwtDecode(token);
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
     loading: false,
-    error: ''
+    error: '',
+    isAuthenticated: false
   },
   reducers: {
     logout: (state) => {
       state.user = null;
+      state.isAuthenticated = false;
+      removeToken();
     }
   },
   extraReducers: (builder) => {
@@ -61,10 +101,12 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isAuthenticated = false;
       })
       .addCase(signup.pending, (state) => {
         state.loading = true;
@@ -77,6 +119,14 @@ const authSlice = createSlice({
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
       });
   }
 });

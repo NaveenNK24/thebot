@@ -10,9 +10,9 @@ const { calculatePOC_VAH_VAL } = require('../indicators/vahval');
 
 exports.historicalData = async (req, res) => {
     // const symbol = 'NSE_EQ%7CINE848E01016';
-    const symbol = 'NSE_FO|67954';
+    const symbol = 'NSE_FO|56046';
     //NSE_FO|67667"
-    const interval = '30minute';
+    const interval = '1minute';
     //interval -> 1minute, 30minute, day, week, month
     const from = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 1 month ago
     const to = new Date().toISOString().split('T')[0];

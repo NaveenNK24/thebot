@@ -30,11 +30,11 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-
+  // console.log(req.body);
   try {
     // Find the user by email
     const user = await User.findOne({ email });
-    // console.log('User found:', user);
+    console.log('User found:', user);
 
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
@@ -66,9 +66,29 @@ const genToken = (id) =>{
   return jwt.sign({ id}, process.env.JWT_SECRET, { expiresIn: '1d' });
 } 
 
+// Middleware to validate JWT token
+exports.validateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access denied. No token provided.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid token.' });
+  }
+};
+
+// Modify the getUser function to use the validateToken middleware
 exports.getUser = async (req, res) => {
   try {
     // Assuming req.user contains the user's ID
+ 
     const { id } = req.user;
 
     // Find the user by ID

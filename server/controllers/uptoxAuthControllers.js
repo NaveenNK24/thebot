@@ -4,6 +4,7 @@ const qs = require('qs');
 const Token = require('../models/upstoxAuthToken')
 const jwt = require('jsonwebtoken');
 
+
 exports.authUpstox = (req, res) => {
     
     const redirectUri = encodeURIComponent(process.env.REDIRECT_URI);
@@ -46,6 +47,10 @@ exports.authUpstox = (req, res) => {
         // await tokenDoc.save();
 
         // Send tokens as a response
+        // localStorage.setItem('upstoxAccessToken', access_token);
+    
+
+        
         res.json({
             access_token,
             // refresh_token,

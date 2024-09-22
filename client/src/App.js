@@ -11,6 +11,8 @@ import UpstoxChart from './components/Historicaldata';
 import OptionChain from './components/OptionChain';
 import UpstoxLogin from './components/UpstoxLogin';
 import IndexDashboard from './components/IndexDashboard';
+import BrokerageConnect from './components/Brokerage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 function App() {
@@ -22,8 +24,9 @@ function App() {
         <Route path="/historicaldata" element={<UpstoxChart />} />
         <Route path="/chart/:symbol" element={<ChartComponent1 />} />
         <Route path="/optionchain" element={<OptionChain />} />
-        <Route path="/dashboard" element={<UpstoxLogin />} />
-        <Route path="/indexdashboard" element={<IndexDashboard />} />
+        <Route path="/upstoxlogin" element={<UpstoxLogin />} />
+        <Route path="/indexdashboard" element={<ProtectedRoute><IndexDashboard /></ProtectedRoute>} />
+        <Route path="/brokerage" element={<BrokerageConnect />} />
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

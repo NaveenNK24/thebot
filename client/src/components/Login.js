@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Alert, Card, InputGroup, Spinner } from 'react-bootstrap';
-import { login } from '../slices/authSlice';
+import { login, checkAuth } from '../slices/authSlice';
 import { Envelope, Lock, BoxArrowInRight } from 'react-bootstrap-icons';
 
 const Login = () => {
@@ -12,14 +12,35 @@ const Login = () => {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  // Add debugging logs
+  const authState = useSelector(state => {
+    console.log('Redux State:', state);
+    return state.auth;
+  });
+  console.log('Auth State:', authState);
+
+  // Use optional chaining to safely access properties
+  const isAuthenticated = authState?.isAuthenticated;
+  const user = authState?.user;
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate('/indexdashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
     try {
-      await dispatch(login({ email, password }));
-      navigate('/dashboard');
+      await dispatch(login({ email, password })).unwrap();
+      navigate('/indexdashboard');
     } catch (error) {
       setError('Invalid email or password. Please try again.');
     } finally {
