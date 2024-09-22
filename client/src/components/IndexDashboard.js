@@ -2,6 +2,8 @@ import React from 'react';
 import { Container, Row, Col, Card, Nav, Navbar, Form, InputGroup, Button } from 'react-bootstrap';
 import { Bell, LayoutList, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../slices/authSlice';
 
 const StockCard = ({ title, value, change, changePercent, chart, onClick }) => (
   <Card className="mb-3" onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -25,9 +27,15 @@ const StockCard = ({ title, value, change, changePercent, chart, onClick }) => (
 
 const IndexDashboard = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleNiftyClick = () => {
     navigate('/option-chain');
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login'); // Redirect to login page after logout
   };
 
   const dummyChart = (
@@ -73,7 +81,8 @@ const IndexDashboard = () => {
             <Button variant="link" className="me-2">
               <ShoppingCart size={20} />
             </Button>
-            <div className="bg-secondary rounded-circle" style={{width: 32, height: 32}}></div>
+            <div className="bg-secondary rounded-circle me-2" style={{width: 32, height: 32}}></div>
+            <Button variant="outline-danger" onClick={handleLogout}>Logout</Button>
           </div>
         </Container>
       </Navbar>

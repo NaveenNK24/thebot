@@ -58,12 +58,12 @@ const OptionChain = () => {
         <td>{renderOptionData(call_options.market_data.oi)}</td>
         <td>{renderOptionData(call_options.market_data.volume)}</td>
         <td>{renderOptionData(call_options.market_data.ltp)}</td>
-        <td className="greeks">
+        {/* <td className="greeks">
           <div>{renderOptionData(call_options.option_greeks.delta)}</div>
           <div>{renderOptionData(call_options.option_greeks.gamma)}</div>
           <div>{renderOptionData(call_options.option_greeks.theta)}</div>
           <div>{renderOptionData(call_options.option_greeks.vega)}</div>
-        </td>
+        </td> */}
         <td 
           className="strike-price" 
           onClick={() => handleStrikePriceClick(strike_price)}
@@ -71,12 +71,12 @@ const OptionChain = () => {
         >
           {strike_price}
         </td>
-        <td className="greeks">
+        {/* <td className="greeks">
           <div>{renderOptionData(put_options.option_greeks.delta)}</div>
           <div>{renderOptionData(put_options.option_greeks.gamma)}</div>
           <div>{renderOptionData(put_options.option_greeks.theta)}</div>
           <div>{renderOptionData(put_options.option_greeks.vega)}</div>
-        </td>
+        </td> */}
         <td>{renderOptionData(put_options.market_data.ltp)}</td>
         <td>{renderOptionData(put_options.market_data.volume)}</td>
         <td>{renderOptionData(put_options.market_data.oi)}</td>
@@ -115,16 +115,16 @@ const OptionChain = () => {
               <Table striped bordered hover size="sm">
                 <thead>
                   <tr>
-                    <th colSpan="4">CALL</th>
+                    <th colSpan="3">CALL</th>
                     <th rowSpan="2">Strike Price</th>
-                    <th colSpan="4">PUT</th>
+                    <th colSpan="3">PUT</th>
                   </tr>
                   <tr>
                     <th>OI</th>
                     <th>Volume</th>
                     <th>LTP</th>
-                    <th>Greeks</th>
-                    <th>Greeks</th>
+                    {/* <th>Greeks</th> */}
+                    {/* <th>Greeks</th> */}
                     <th>LTP</th>
                     <th>Volume</th>
                     <th>OI</th>

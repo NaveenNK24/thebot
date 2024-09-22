@@ -4,8 +4,6 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-
 import ChartComponent1 from './components/chart';
 import UpstoxChart from './components/Historicaldata';
 import OptionChain from './components/OptionChain';
@@ -21,12 +19,12 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/historicaldata" element={<UpstoxChart />} />
-        <Route path="/chart/:symbol" element={<ChartComponent1 />} />
-        <Route path="/optionchain" element={<OptionChain />} />
-        <Route path="/upstoxlogin" element={<UpstoxLogin />} />
+        <Route path="/historicaldata" element={<ProtectedRoute><UpstoxChart /></ProtectedRoute>} />
+        <Route path="/chart/:symbol" element={<ProtectedRoute><ChartComponent1 /></ProtectedRoute>} />
+        <Route path="/optionchain" element={<ProtectedRoute><OptionChain /></ProtectedRoute>} />
+        <Route path="/upstoxlogin" element={<ProtectedRoute><UpstoxLogin /></ProtectedRoute>} />
         <Route path="/indexdashboard" element={<ProtectedRoute><IndexDashboard /></ProtectedRoute>} />
-        <Route path="/brokerage" element={<BrokerageConnect />} />
+        <Route path="/brokerage" element={<ProtectedRoute><BrokerageConnect /></ProtectedRoute>} />
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
