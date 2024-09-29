@@ -22,7 +22,7 @@ function BrokerageConnect() {
 
   const handleBrokerSetup = (brokerName) => {
     if (brokerName === 'Upstox') {
-      navigate('/upstox-login');
+      navigate('/upstoxlogin');
     }
     // Add conditions for other brokers if needed
   };

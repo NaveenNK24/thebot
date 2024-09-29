@@ -7,7 +7,7 @@ const auth = (req, res, next) => {
   // const authHeader = req.headers['authorization'];
   const authHeader = req.headers['authorization'] || req.headers['Authorization'];
 
-  // console.log("Auth ",authHeader);
+  console.log("Auth ",authHeader);
   
   if (!authHeader) return res.status(401).json({ message: 'Auth No token provided' });
 

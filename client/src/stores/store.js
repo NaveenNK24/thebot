@@ -13,7 +13,7 @@ import authSlice from "../slices/authSlice";
 import upstoxChartSlice from "../slices/upstoxChartSlice";
 import optionChainSlice from "../slices/optionChainSlice";
 import upstoxAuthSlice from "../slices/upstoxAuthSlice";    
-// import upstoxConnection from "../slices/upstoxConnection";
+import upstoxConnection from "../slices/upstoxConnection";
 const store = configureStore({
     devTools:true,
     reducer: {
@@ -22,7 +22,7 @@ const store = configureStore({
         upstoxChartSlice,
         optionChainSlice,
         upstoxAuthSlice,
-        // upstoxConnection
+        upstoxConnection
 
     }
 })

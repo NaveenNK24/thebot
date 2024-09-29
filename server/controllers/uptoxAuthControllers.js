@@ -5,14 +5,33 @@ const Token = require('../models/upstoxAuthToken')
 const jwt = require('jsonwebtoken');
 
 
-exports.authUpstox = (req, res) => {
+ exports.authUpstox = async (req, res) => {
+
+     const redirectUri = encodeURIComponent(process.env.REDIRECT_URI);
+     console.log(redirectUri);
+     const authUrl = `https://api.upstox.com/v2/login/authorization/dialog?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code`;
+     try {
+        const response = await axios.get(authUrl, {
+          method: 'GET',
+          withCredentials: true  // Include cookies, if applicable
+        });
+        // res.json(response.data);
+        res.json({authUrl});
+        // console.log("response",response);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+     
+    //  res.json({authUrl});
+    //  res.redirect(authUrl);
     
-    const redirectUri = encodeURIComponent(process.env.REDIRECT_URI);
-    const authUrl = `https://api.upstox.com/v2/login/authorization/dialog?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code`;
-    res.redirect(authUrl);
+    
+    // const redirectUri = encodeURIComponent(process.env.REDIRECT_URI);
+    // const authUrl = `https://api.upstox.com/v2/login/authorization/dialog?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code`;
+    // res.redirect(authUrl);
   };
 
-  exports.handleUpstoxCallback = async (req, res) => {
+exports.handleUpstoxCallback = async (req, res) => {
     try {
         const { code } = req.query;
 
@@ -35,7 +54,7 @@ exports.authUpstox = (req, res) => {
             }
         });
 
-        // console.log(response);
+        console.log(response);
         
          const { access_token } = response.data;
 
@@ -45,11 +64,6 @@ exports.authUpstox = (req, res) => {
         // // Store tokens in the database
         // const tokenDoc = new Token({ accessToken: access_token });
         // await tokenDoc.save();
-
-        // Send tokens as a response
-        // localStorage.setItem('upstoxAccessToken', access_token);
-    
-
         
         res.json({
             access_token,

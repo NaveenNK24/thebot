@@ -6,7 +6,13 @@ export const fetchOptionChain = createAsyncThunk(
   'optionChain/fetchOptionChain',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5005/api/upstox/option-chain');
+      const response = await axios.get('http://localhost:5005/api/upstox/option-chain',{
+        params: {
+          instrument_key: 'NSE_INDEX|Nifty 50',
+          expiry_date: '2024-09-26',
+          token: localStorage.getItem('upstoxToken'),
+        },
+      });
       console.log('API response:', response.data);
       return response.data;
     } catch (error) {

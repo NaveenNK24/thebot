@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 import { checkAuth } from '../slices/authSlice';
-import { Alert, Spinner , ProgressBar, Button} from 'react-bootstrap';
+import { Alert, Spinner , Button} from 'react-bootstrap';
 
 
 const ProtectedRoute = ({ children }) => {

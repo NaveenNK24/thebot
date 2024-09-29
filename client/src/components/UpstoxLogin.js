@@ -2,17 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, Button, Form, InputGroup, ListGroup, Alert, Spinner } from 'react-bootstrap';
 import { Eye, EyeSlash, Clipboard } from 'react-bootstrap-icons';
-import { checkConnectionStatus, connectUpstox } from '../slices/upstoxConnection';
+import { checkConnectionStatus, connectUpstox, disconnectUpstox } from '../slices/upstoxConnection';
+// import { reauthorizeUpstox:login } from '../slices/upstoxAuthSlice'; // Add this import
+import { login,logout } from '../slices/upstoxAuthSlice';
+
 
 export default function UpstoxLogin() {
   const dispatch = useDispatch();
-  const { isConnected, error, loading, connectionName: savedConnectionName } = useSelector(state => state.upstox);
+  const upstoxState = useSelector(state => state.upstoxConnection);
+  const upstoxAuthState = useSelector(state => state.upstoxAuthSlice);
+  console.log('upstoxAuthState:', upstoxAuthState);
+  
+  // Add this console.log to debug the state
+  console.log('Upstox state:', upstoxState);
+
+  const { isConnected = false, error = null, loading = false, connectionName: savedConnectionName = '' } = upstoxState || {};
 
   const [showApiKey, setShowApiKey] = useState(false);
   const [showApiSecret, setShowApiSecret] = useState(false);
   const [connectionName, setConnectionName] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
+  const [upstoxToken, setUpstoxToken] = useState('');
 
   useEffect(() => {
     dispatch(checkConnectionStatus());
@@ -23,8 +34,18 @@ export default function UpstoxLogin() {
     dispatch(connectUpstox({ connectionName, apiKey, apiSecret }));
   };
 
+  const handleDisconnect = () => {
+    dispatch(disconnectUpstox());
+    dispatch(logout());
+  };
+
   const toggleVisibility = (setter) => () => setter((prev) => !prev);
   const copyToClipboard = (text) => navigator.clipboard.writeText(text);
+
+  // Add this function to handle reauthorization
+  const handleReauthorize = () => {
+    dispatch(login());
+  };
 
   if (loading) {
     return (
@@ -39,18 +60,49 @@ export default function UpstoxLogin() {
   }
 
   if (isConnected) {
-    return (
-      <Card className="w-100 mx-auto" style={{ maxWidth: '48rem' }}>
-        <Card.Body>
-          <Alert variant="success">
-            You are connected to Upstox with the connection name: {savedConnectionName}. 
-            Your API key and secret are securely stored.
-          </Alert>
-        </Card.Body>
-      </Card>
-    );
+    if (upstoxAuthState.isAuthenticated) {
+      return (
+        <Card className="w-100 mx-auto" style={{ maxWidth: '48rem' }}>
+          <Card.Body>
+            <Alert variant="success">
+              Your Upstox account is connected and authorized with the connection name: {savedConnectionName}.
+            </Alert>
+            <Button variant="danger" onClick={handleDisconnect} className="w-100 mt-3">
+              Disconnect Upstox
+            </Button>
+          </Card.Body>
+        </Card>
+      );
+    } else {
+      return (
+        <Card className="w-100 mx-auto" style={{ maxWidth: '48rem' }}>
+          <Card.Body>
+            <Alert variant="warning">
+              Your Upstox account is connected but not authorized. Please reauthorize to generate a new token.
+            </Alert>
+            <Form.Group className="mb-3">
+              <Form.Label>Upstox Token:</Form.Label>
+              <Form.Control 
+                type="text" 
+                placeholder="Enter your Upstox token" 
+                value={upstoxToken}
+                onChange={(e) => setUpstoxToken(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleReauthorize} className="w-100 mt-3">
+              Reauthorize Upstox
+            </Button>
+            <Button variant="danger" onClick={handleDisconnect} className="w-100 mt-3">
+              Disconnect Upstox
+            </Button>
+          </Card.Body>
+        </Card>
+      );
+    }
   }
 
+  // If not connected, show the form to connect Upstox
   return (
     <Card className="w-100 mx-auto" style={{ maxWidth: '48rem' }}>
       <Card.Header>

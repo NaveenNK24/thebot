@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Row, Col, Form, Button, Alert, Card, InputGroup, Spinner } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Card, InputGroup, Spinner } from 'react-bootstrap';
 import { login, checkAuth } from '../slices/authSlice';
 import { Envelope, Lock, BoxArrowInRight } from 'react-bootstrap-icons';
 

@@ -1,18 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const UpstoxConnection = require('../models/UpstoxConnection'); // Mongoose model
+const { authUpstox } = require('./uptoxAuthControllers');
+const cors = require('cors');
 
-router.get('/connection-status', async (req, res) => {
+router.use(cors());
+
+const getConnectionStatus = async (req, res) => {
   try {
     const connection = await UpstoxConnection.findOne();
-    res.json({ isConnected: !!connection });
+    // console.log(connection);
+    if(connection){
+      res.json({ isConnected: !!connection ,connectionName:connection.connectionName});
+    }
+    else{
+      res.json({ isConnected: false });
+    }
   } catch (err) {
     console.error('Error checking connection status:', err);
     res.status(500).json({ error: 'Server error' });
   }
-});
+};
 
-router.post('/connect', async (req, res) => {
+const connect = async (req, res) => {
   try {
     const { connectionName, apiKey, apiSecret } = req.body;
     
@@ -29,14 +39,36 @@ router.post('/connect', async (req, res) => {
     );
 
     // Update environment variables
-    process.env.UPSTOX_API_KEY = apiKey;
-    process.env.UPSTOX_API_SECRET = apiSecret;
+    process.env.CLIENT_ID = apiKey;
+    process.env.CLIENT_SECRET = apiSecret;
 
-    res.json({ success: true });
+  res.json({ success: true })
+
+ ;
   } catch (err) {
     console.error('Error connecting to Upstox:', err);
     res.status(500).json({ success: false, error: 'Server error' });
   }
-});
+};
 
-module.exports = router;
+const disconnect = async (req, res) => {
+  try {
+    // Delete the connection from MongoDB
+    await UpstoxConnection.deleteMany({});
+
+    // Clear environment variables
+    process.env.CLIENT_ID = '';
+    process.env.CLIENT_SECRET = '';
+
+    res.json({ success: true, message: 'Disconnected successfully' });
+  } catch (err) {
+    console.error('Error disconnecting from Upstox:', err);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+};
+
+module.exports = {
+  getConnectionStatus,
+  connect,
+  disconnect
+};
