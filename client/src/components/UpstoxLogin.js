@@ -20,7 +20,7 @@ export default function UpstoxLogin() {
 
   const [showApiKey, setShowApiKey] = useState(false);
   const [showApiSecret, setShowApiSecret] = useState(false);
-  const [connectionName, setConnectionName] = useState('');
+  const [connectionName, setConnectionName] = useState('App');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
   const [upstoxToken, setUpstoxToken] = useState('');
@@ -80,7 +80,7 @@ export default function UpstoxLogin() {
             <Alert variant="warning">
               Your Upstox account is connected but not authorized. Please reauthorize to generate a new token.
             </Alert>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Upstox Token:</Form.Label>
               <Form.Control 
                 type="text" 
@@ -89,7 +89,7 @@ export default function UpstoxLogin() {
                 onChange={(e) => setUpstoxToken(e.target.value)}
                 required
               />
-            </Form.Group>
+            </Form.Group> */}
             <Button variant="primary" onClick={handleReauthorize} className="w-100 mt-3">
               Reauthorize Upstox
             </Button>
@@ -151,6 +151,9 @@ export default function UpstoxLogin() {
 
           <Form.Group className="mb-3">
             <Form.Label>API key:</Form.Label>
+            <Button variant="outline-secondary" size="icon" onClick={() => copyToClipboard("fbc59782-04a6-43cc-9bc1-bddba69aa93b")}>
+                      <Clipboard className="h-4 w-4" />
+                    </Button>
             <InputGroup>
               <Form.Control 
                 type={showApiKey ? "text" : "password"} 
@@ -166,6 +169,9 @@ export default function UpstoxLogin() {
 
           <Form.Group className="mb-3">
             <Form.Label>API Secret:</Form.Label>
+            <Button variant="outline-secondary" size="icon" onClick={() => copyToClipboard("ljqymw2sr4")}>
+                      <Clipboard className="h-4 w-4" />
+                    </Button>
             <InputGroup>
               <Form.Control 
                 type={showApiSecret ? "text" : "password"} 

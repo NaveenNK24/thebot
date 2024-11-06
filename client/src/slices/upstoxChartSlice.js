@@ -23,9 +23,10 @@ export const fetchData = createAsyncThunk(
 
 export const fetchHistoricalData = createAsyncThunk(
   'upstoxChart/fetchHistoricalData',
-  async (strikePrice, { rejectWithValue }) => {
+  async ({instrument_key}, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://localhost:5005/api/upstox/historical-data/${strikePrice}`, {
+      console.log(instrument_key,"IK")
+      const response = await fetch(`http://localhost:5005/api/upstox/historical-data/${instrument_key}`, {
         method: 'GET',
       });
 

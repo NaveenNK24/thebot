@@ -2,17 +2,27 @@
   "dependencies": {
     "axios": "^1.7.4",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
+    "binance-api-node": "^0.12.7",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.3",
+    "protobufjs": "^7.4.0",
+    "socket.io": "^4.8.0",
     "tulind": "^0.8.20",
-    "util": "^0.12.5"
+    "upstox-js-sdk": "^2.11.0",
+    "util": "^0.12.5",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
+    "concurrently": "^9.0.1",
     "nodemon": "^3.1.4"
-  }
+  },
+  "scripts": {
+  "both": "concurrently \"nodemon server.js\" \"nodemon upstoxTrade/marketfeed/websocket_client.js\""
+}
+
 }

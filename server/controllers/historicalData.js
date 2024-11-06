@@ -12,11 +12,13 @@ exports.historicalData = async (req, res) => {
     const { symbol } = req.params || {};
     const { smaPeriod } = req.query; 
     const emaPeriod = 20;
-    const interval = '15m';
+    const interval = '1m';
     const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 1 month ago
     const to = new Date().toISOString().split('T')[0];
 
     const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=1000`;
+
+    
 
     try {
         const response = await axios.get(url);
@@ -31,6 +33,7 @@ exports.historicalData = async (req, res) => {
             const istTime = utcTime + istOffset; // Convert UTC to IST
 
             return {
+                symbol: symbol,
                 time: utcTime,
                 open: parseFloat(d[1]),
                 high: parseFloat(d[2]),
@@ -59,7 +62,7 @@ exports.historicalData = async (req, res) => {
            
           
           //  console.log("cdata",cdata[15]);
-          cdata = markers_inc(cdata); //  don't use
+          cdata = markers_inc(cdata); 
             // console.log("cdata",cdata[15]);
 
         cdata = calculatePivotLevels(cdata);

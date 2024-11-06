@@ -3,6 +3,7 @@ import { fetchData } from '../slices/chartSlice';
 import { createChart, CrosshairMode, LineStyle, LineType } from 'lightweight-charts';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import io from 'socket.io-client';
 
 const ChartComponent1 = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const ChartComponent1 = () => {
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
   const histogramSeriesRef = useRef(null);
+  const socketRef = useRef(null);
 
   const [showSMA, setShowSMA] = useState(true);
   const [smaPeriod, setSmaPeriod] = useState(10); // Default SMA period
@@ -26,9 +28,11 @@ const ChartComponent1 = () => {
   useEffect(() => {
     if (!data.length) return;
 
+
     // Create chart if not already created
     if (!chartRef.current) {
       const domElement = document.getElementById('tvchart');
+
       chartRef.current = createChart(domElement, {
         timeScale: { 
           timeVisible: true, 
@@ -104,44 +108,58 @@ const ChartComponent1 = () => {
     
 
     // Plot all pivot points, support, and resistance levels
-    plotLineSeries('blue', 1.5, LineStyle.Solid, 'pivot', false); 
-    plotLineSeries('blue', 1.5, LineStyle.Solid, 'toppivot', false); 
-    plotLineSeries('blue', 1.5, LineStyle.Solid, 'bottompivot', false); 
+    // plotLineSeries('blue', 1.5, LineStyle.Solid, 'pivot', false); 
+    // plotLineSeries('blue', 1.5, LineStyle.Solid, 'toppivot', false); 
+    // plotLineSeries('blue', 1.5, LineStyle.Solid, 'bottompivot', false); 
 
-    plotLineSeries('green', 0.5, LineStyle.Solid, 'r1', false); 
-    plotLineSeries('green', 0.5, LineStyle.Solid, 'r2', false); 
-    plotLineSeries('green', 0.5, LineStyle.Solid, 'r3', false); 
-    plotLineSeries('green', 0.5, LineStyle.Solid, 'r4', false); 
+    // plotLineSeries('green', 0.5, LineStyle.Solid, 'r1', false); 
+    // plotLineSeries('green', 0.5, LineStyle.Solid, 'r2', false); 
+    // plotLineSeries('green', 0.5, LineStyle.Solid, 'r3', false); 
+    // plotLineSeries('green', 0.5, LineStyle.Solid, 'r4', false); 
 
-    plotLineSeries('red', 0.5, LineStyle.Solid, 's1', false); 
-    plotLineSeries('red', 0.5, LineStyle.Solid, 's2', false); 
-    plotLineSeries('red', 0.5, LineStyle.Solid, 's3', false); 
-    plotLineSeries('red', 0.5, LineStyle.Solid, 's4', false); 
+    // plotLineSeries('red', 0.5, LineStyle.Solid, 's1', false); 
+    // plotLineSeries('red', 0.5, LineStyle.Solid, 's2', false); 
+    // plotLineSeries('red', 0.5, LineStyle.Solid, 's3', false); 
+    // plotLineSeries('red', 0.5, LineStyle.Solid, 's4', false); 
 
     plotLineSeries('green', 1, LineStyle.Solid, 'ema1', false); 
     plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
     plotLineSeries('violet', 2, LineStyle.Solid, 'sma1', false); 
 
-    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
-    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
-    plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
+    // plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
+    // plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
+    // plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
 
     // Combine markers into a single setMarkers call
     const markers = data
       .flatMap(d => [
-        d.long ? {
+        d.longBuy ? {
           time: d.time,
           position: 'belowBar',
           color: 'green',
           shape: 'arrowUp',
-          text: 'LONG',
+          text: 'LB',
         } : null,
-        d.short ? {
+        d.longSell ? {
           time: d.time,
           position: 'aboveBar',
-          color: 'red',
+          color: d.buySellDifference >= 0 ? 'violet' : 'red',
           shape: 'arrowDown',
-          text: 'SHORT',
+          text: `LS ${d.buySellDifference != null ? d.buySellDifference.toFixed(2) : 'N/A'}`,
+        } : null,
+        d.shortBuy ? {
+          time: d.time,
+          position: 'belowBar',
+          color: 'green',
+          shape: 'arrowUp',
+          text: 'SB',
+        } : null,
+        d.shortSell ? {
+          time: d.time,
+          position: 'aboveBar',
+          color: d.buyshortSellDifference >= 0 ? 'Brown' : 'Black',
+          shape: 'arrowDown',
+          text: `SS ${d.buyshortSellDifference != null ? d.buyshortSellDifference.toFixed(2) : 'N/A'}`,
         } : null,
         d.WRSignal === 'Long' ? {
           time: d.time,
@@ -205,22 +223,73 @@ const ChartComponent1 = () => {
        }
 
 
-  
-      
     };
+
+    socketRef.current = io("http://localhost:5005", {
+      withCredentials: true,
+    });
+
+    socketRef.current.on("connect", () => {
+      console.log("WebSocket connected with ID: ", socketRef.current.id);
+      // setSocketConnected(true); // Update the connection status
+    });
+
+    // socketRef.current.on("KLINE", (data) => {
+      console.log("Received KLINE data: ", data);
+
+    //   // setKlineData(data); // Update the state with KLINE data
+    // });
+
+    socketRef.current.on('KLINE', (pl) => {
+      const newCandle = {
+        time: pl.time,
+        open: pl.open,
+        high: pl.high,
+        low: pl.low,
+        close: pl.close,
+      };
+
+      console.log(newCandle)
+
+      // Update the chart with the new candlestick data
+      // candleSeriesRef.current.update(newCandle);
+
+      // const oldestTime = candleSeriesRef.current.data[0]?.time;
+      // if (newCandle.time <= oldestTime) {
+      //   // Remove the oldest data point and add the new one
+      //   candleSeriesRef.current.setData(candleSeriesRef.current.data.slice(1).concat(newCandle));
+      // } else {
+      //   candleSeriesRef.current.update(newCandle);
+      // }
+
+      // const newHistogram = {
+      //   time: pl.time,
+      //   value: pl.volume,
+      //   color: pl.open > pl.close ? "#fd4040" : "#089981"
+      // };
+
+      // histogramSeriesRef.current.update(newHistogram); // Update the histogram with new volume data
+    });
 
     // Subscribe to crosshair move
     chartRef.current.subscribeCrosshairMove(myCrosshairMoveHandler);
 
     // Unsubscribe from crosshair move on cleanup
     return () => {
+      socketRef.current.disconnect(); 
       if (chartRef.current) {
         chartRef.current.unsubscribeCrosshairMove(myCrosshairMoveHandler);
       }
     };
 
+
+    
+
   }, [data, showSMA]);
 
+
+
+  
   const toggleSMA = () => setShowSMA(prev => !prev);
 
   const handlePeriodChange = (e) => {

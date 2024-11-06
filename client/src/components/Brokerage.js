@@ -4,17 +4,17 @@ import { useNavigate } from 'react-router-dom';
 
 const brokers = [
   { name: 'Upstox', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'A.C. Agrawal Shares', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'Alice Blue', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0/1' },
-  { name: 'AngelOne', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'Bigul', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'Choice', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'Dhan', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0/1' },
-  { name: 'Firstock', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'FlatTrade', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'Fyers', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'IIFL', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
-  { name: 'JM Financial', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'A.C. Agrawal Shares', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'Alice Blue', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0/1' },
+  // { name: 'AngelOne', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'Bigul', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'Choice', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'Dhan', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0/1' },
+  // { name: 'Firstock', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'FlatTrade', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'Fyers', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'IIFL', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
+  // { name: 'JM Financial', logo: '/placeholder.svg?height=50&width=50', nse: true, bse: true, apiSetup: '0' },
 ];
 
 function BrokerageConnect() {

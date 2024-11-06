@@ -13,6 +13,7 @@ import BrokerageConnect from './components/Brokerage';
 import ProtectedRoute from './components/ProtectedRoute';
 import InvalidPathAlert from './components/InvalidPathAlert';
 import UpstoxCallback from './components/UpstoxCallback';
+import ConnectBroker from './components/ConnectBroker';
 
 function App() {
   return (
@@ -21,15 +22,17 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/upstox/callback" element={<UpstoxCallback />} />
-        <Route path="/historicaldata" element={<ProtectedRoute><UpstoxChart /></ProtectedRoute>} />
+        <Route path="/chart/upstox/:instrument_key" element={<ProtectedRoute><UpstoxChart /></ProtectedRoute>} />
         <Route path="/chart/:symbol" element={<ProtectedRoute><ChartComponent1 /></ProtectedRoute>} />
         <Route path="/optionchain" element={<ProtectedRoute><OptionChain /></ProtectedRoute>} />
         <Route path="/upstoxlogin" element={<ProtectedRoute><UpstoxLogin /></ProtectedRoute>} />
         <Route path="/indexdashboard" element={<ProtectedRoute><IndexDashboard /></ProtectedRoute>} />
         <Route path="/brokerage" element={<ProtectedRoute><BrokerageConnect /></ProtectedRoute>} />
+        <Route path="/connectbrokerage" element={<ProtectedRoute> <ConnectBroker/> </ProtectedRoute>} />
         {/* Catch-all route */}
         <Route path="*" element={<InvalidPathAlert />} />
         <Route path="/upstox/callback" component={UpstoxCallback} />
+        
         
       </Routes>
     </div>

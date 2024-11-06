@@ -24,6 +24,7 @@
     "react-scripts": "^5.0.1",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0",
+    "socket.io-client": "^4.8.0",
     "styled-components": "^6.1.12",
     "tulind": "^0.8.20",
     "util": "^0.12.5",

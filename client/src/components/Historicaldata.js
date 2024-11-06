@@ -1,14 +1,15 @@
 
 
 import React, { useEffect, useRef, useState } from 'react';
-import { fetchData } from '../slices/upstoxChartSlice';
+import { fetchData,fetchHistoricalData } from '../slices/upstoxChartSlice';
 import { createChart, CrosshairMode, LineStyle, LineType } from 'lightweight-charts';
-// import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 const UpstoxChart = () => {
   const dispatch = useDispatch();
-//   const { symbol } = useParams();
+  const { instrument_key } = useParams();
+console.log("I_K",instrument_key)
   const { data = [], loading, error } = useSelector((state) => state.upstoxChartSlice);
 
   const chartRef = useRef(null);
@@ -23,7 +24,7 @@ const UpstoxChart = () => {
 useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await dispatch(fetchData()); // Call the Redux action here
+        const response = await dispatch(fetchHistoricalData({instrument_key})); // Call the Redux action here
         if (response && response.payload) {  // Assuming response contains a payload
         //   setChartData(response.payload);
         } else {
@@ -35,7 +36,7 @@ useEffect(() => {
     };
   
     fetchChartData(); // Now calling fetchChartData, not fetchData
-}, [dispatch]);
+}, [dispatch,instrument_key]);
 
   
 
@@ -139,26 +140,26 @@ useEffect(() => {
     plotLineSeries('red', 1, LineStyle.Solid, 'ema2', false); 
     plotLineSeries('violet', 2, LineStyle.Solid, 'sma1', false); 
 
-    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
-    plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
-    plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
+    // plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'vah', false, LineType.Simple); 
+    // plotLineSeries('red', 1.5, LineStyle.LargeDashed, 'val', false,LineType.WithSteps); 
+    // plotLineSeries('black', 1.5, LineStyle.LargeDashed, 'poc', false,LineType.WithSteps); 
 
     // Combine markers into a single setMarkers call
     const markers = data
       .flatMap(d => [
-        d.long ? {
+        d.longBuy ? {
           time: d.time,
           position: 'belowBar',
-          color: 'green',
+          color: 'blue',
           shape: 'arrowUp',
-          text: 'LONG',
+          text: 'L',
         } : null,
-        d.short ? {
+        d.longSell ? {
           time: d.time,
           position: 'aboveBar',
-          color: 'red',
+          color: d.buySellDifference >= 0 ? 'violet' : 'red',
           shape: 'arrowDown',
-          text: 'SHORT',
+          text: `S ${d.buySellDifference != null ? d.buySellDifference.toFixed(2) : 'N/A'}`,
         } : null,
         d.WRSignal === 'Long' ? {
           time: d.time,
