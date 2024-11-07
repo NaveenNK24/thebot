@@ -2,7 +2,8 @@
 var UpstoxClient = require("upstox-js-sdk");
 const WebSocket = require("ws").WebSocket;
 const protobuf = require("protobufjs");
-const Token = require('../../models/upstoxAuthToken');
+Token = require('../../models/upstoxAuthToken');
+
 const EventEmitter = require("events");
 const eventEmitter = new EventEmitter();
 
@@ -11,13 +12,19 @@ let protobufRoot = null;
 let defaultClient = UpstoxClient.ApiClient.instance;
 let apiVersion = "2.0";
 let OAUTH2 = defaultClient.authentications["OAUTH2"];
-// OAUTH2.accessToken = "ACCESS_TOKEN"; // Replace "ACCESS_TOKEN" with your actual token
-OAUTH2.accessToken =  'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3TUFONzkiLCJqdGkiOiI2NzI5ZTFkZmNhZjc2ZDUzNzg0Yzg2YmUiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaWF0IjoxNzMwNzk4MDQ3LCJpc3MiOiJ1ZGFwaS1nYXRld2F5LXNlcnZpY2UiLCJleHAiOjE3MzA4NDQwMDB9.3cDIr9RUDmCMTbb_yh_Goh7dEh97oeMMa2pZv9MI0b0'
-
-console.log(OAUTH2.accessToken);
 
 
-// Function to authorize the market data feed
+// Function to get the Upstox token from the database
+const getUpstoxToken = async () => {
+    try {
+        const tokenDoc = await Token.findOne(); // Fetch the first token document
+        return tokenDoc ? tokenDoc.upstoxToken : null; // Return the token or null if not found
+    } catch (error) {
+        console.error('Error retrieving Upstox token from DB:', error);
+        throw new Error('Failed to retrieve Upstox token');
+    }
+};
+
 const getMarketFeedUrl = async () => {
   return new Promise((resolve, reject) => {
     let apiInstance = new UpstoxClient.WebsocketApi(); // Create new Websocket API instance
@@ -56,7 +63,7 @@ const connectWebSocket = async (wsUrl) => {
           method: "sub",
           data: {
             mode: "full",
-            instrumentKeys: ["NSE_INDEX|Nifty 50","NSE_FO|50392"],
+            instrumentKeys: ["NSE_FO|50387"],
           },
         };
         ws.send(Buffer.from(JSON.stringify(data)));
@@ -103,9 +110,23 @@ const decodeProfobuf = (buffer) => {
 // Initialize the protobuf part and establish the WebSocket connection
 (async () => {
   try {
-    await initProtobuf(); // Initialize protobuf
-    const wsUrl = await getMarketFeedUrl(); // Get the market feed URL
-    const ws = await connectWebSocket(wsUrl); // Connect to the WebSocket
+
+    OAUTH2.accessToken = await getUpstoxToken();
+    // await initProtobuf(); // Initialize protobuf
+    // const wsUrl = await getMarketFeedUrl(); // Get the market feed URL
+    // const ws = await connectWebSocket(wsUrl); // Connect to the WebSocket
+
+    // const isValid = await validateAccessToken(OAUTH2.accessToken);
+    if (OAUTH2.accessToken) {
+        // console.log("OAUTH2.accessToken is valid:", OAUTH2.accessToken);
+        await initProtobuf(); // Initialize protobuf
+        const wsUrl = await getMarketFeedUrl(); // Get the market feed URL
+        const ws = await connectWebSocket(wsUrl); // Connect to the WebSocket
+    } else {
+        console.log("OAUTH2.accessToken is invalid. Cannot proceed with WebSocket connection.");
+        // Handle the invalid token case (e.g., wait for a valid token or refresh)
+    }
+
   } catch (error) {
     console.error("An error occurred:", error);
   }

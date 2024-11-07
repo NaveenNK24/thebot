@@ -1,19 +1,19 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import Login from './path/Login';
+import Signup from './path/Signup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import ChartComponent1 from './components/chart';
 import UpstoxChart from './components/Historicaldata';
-import OptionChain from './components/OptionChain';
-import UpstoxLogin from './components/UpstoxLogin';
+import OptionChain from './path/OptionChain';
+import UpstoxLogin from './path/UpstoxLogin';
 import IndexDashboard from './components/IndexDashboard';
-import BrokerageConnect from './components/Brokerage';
+import BrokerageConnect from './path/Brokerage';
 import ProtectedRoute from './components/ProtectedRoute';
-import InvalidPathAlert from './components/InvalidPathAlert';
+import InvalidPathAlert from './path/InvalidPathAlert';
 import UpstoxCallback from './components/UpstoxCallback';
-import ConnectBroker from './components/ConnectBroker';
+import ConnectBroker from './path/ConnectBroker';
 
 function App() {
   return (

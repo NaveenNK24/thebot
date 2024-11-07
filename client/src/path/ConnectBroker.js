@@ -1,166 +1,17 @@
-// import React from 'react';
-// import { Container, Row, Col, Nav, Navbar, Form, Button, Table, Badge, InputGroup, Dropdown } from 'react-bootstrap';
-// // import { Bell, ChevronLeft, ChevronRight, Copy, Heart, LayoutDashboard, Menu, Package, Settings, Star, X } from 'react-icons/fa';
-
-// export default function ConnectBroker() {
-//   return (
-//     <div className="min-vh-100 bg-light">
-//       {/* Sidebar */}
-//       <Navbar bg="white" className="flex-column align-items-start p-4 border-end" style={{width: '250px', position: 'fixed', height: '100vh'}}>
-//         <Navbar.Brand href="#home" className="mb-4">
-//           <img src="/placeholder.svg?height=40&width=120" alt="1Cliq Logo" width={120} height={40} />
-//         </Navbar.Brand>
-//         <Nav className="flex-column w-100">
-//           <Nav.Link href="#" className="d-flex align-items-center gap-2 px-3 py-2 text-danger bg-danger bg-opacity-10 rounded">
-//             {/* <Package size={20} /> */}
-//             <span>Brokers</span>
-//           </Nav.Link>
-//           <Nav.Link href="#" className="d-flex align-items-center gap-2 px-3 py-2 text-secondary">
-//             {/* <LayoutDashboard size={20} /> */}
-//             <span>1Cliq Plans</span>
-//           </Nav.Link>
-//           <Nav.Link href="#" className="d-flex align-items-center gap-2 px-3 py-2 text-secondary">
-//             {/* <Settings size={20} /> */}
-//             <span>Ditto Setting</span>
-//           </Nav.Link>
-//           <Nav.Link href="#" className="d-flex align-items-center gap-2 px-3 py-2 text-secondary">
-//             {/* <Star size={20} /> */}
-//             <span>Favourite setting</span>
-//           </Nav.Link>
-//         </Nav>
-//       </Navbar>
-
-//       {/* Main Content */}
-//       <Container fluid className="ms-auto p-4" style={{marginLeft: '250px'}}>
-//         {/* Header */}
-//         <Row className="mb-4 align-items-center">
-//           <Col>
-//             <InputGroup>
-//               <Button variant="outline-secondary">
-//                 {/* <Menu size={16} /> */}
-//               </Button>
-//               <Form.Control type="search" placeholder="Search..." />
-//             </InputGroup>
-//           </Col>
-//           <Col xs="auto">
-//             <Button variant="outline-secondary" className="me-2">
-//               {/* <Bell size={16} className="me-2" /> */}
-//               DIWALI DHAMAKA OFFERS
-//               <Badge bg="danger" className="ms-2">3</Badge>
-//             </Button>
-//             <Button variant="outline-secondary">
-//               <img src="/placeholder.svg?height=32&width=32" alt="Profile" width={32} height={32} className="rounded-circle" />
-//             </Button>
-//           </Col>
-//         </Row>
-
-//         {/* Broker Management */}
-//         <div className="bg-white rounded shadow p-4 mb-4">
-//           <div className="d-flex justify-content-between mb-3">
-//             <div>
-//               <Button variant="danger" className="me-2">ADD BROKER</Button>
-//               <Button variant="outline-secondary">REFRESH</Button>
-//             </div>
-//             <Button variant="danger">OPEN 1CLIQ WINDOW</Button>
-//           </div>
-
-//           <Table responsive>
-//             <thead>
-//               <tr>
-//                 <th>Broker</th>
-//                 <th>Broker ID</th>
-//                 <th>Name Tag</th>
-//                 <th>App ID</th>
-//                 <th>App Secrect Key</th>
-//                 <th>Status</th>
-//                 <th>Last Token Generated At</th>
-//                 <th>Generate Token</th>
-//                 <th>Action</th>
-//                 <th>Added At</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr>
-//                 <td>Upstox</td>
-//                 <td>7M****79</td>
-//                 <td>NK</td>
-//                 <td>c00********a00</td>
-//                 <td>********wqha</td>
-//                 <td><Badge bg="success">ACTIVE</Badge></td>
-//                 <td>30-10-24, 08:59</td>
-//                 <td><Button variant="link" className="text-danger p-0">Click to Generate Token</Button></td>
-//                 <td>
-//                   {/* <Button variant="light" size="sm" className="me-1"><Copy size={16} /></Button> */}
-//                   {/* <Button variant="light" size="sm"><X size={16} /></Button> */}
-//                 </td>
-//                 <td>24-10-24, 17:23</td>
-//               </tr>
-//             </tbody>
-//           </Table>
-
-//           <div className="d-flex justify-content-between align-items-center mt-3">
-//             <div className="d-flex align-items-center">
-//               <span className="me-2">Items per page:</span>
-//               <Form.Select style={{width: '70px'}}>
-//                 <option>10</option>
-//                 <option>20</option>
-//                 <option>50</option>
-//               </Form.Select>
-//             </div>
-//             <div className="d-flex align-items-center">
-//               <span className="me-2">1-1 of 1</span>
-//               <Button variant="outline-secondary" size="sm" disabled className="me-1">
-//                 {/* <ChevronLeft size={16} /> */}
-//               </Button>
-//               <Button variant="outline-secondary" size="sm" disabled>
-//                 {/* <ChevronRight size={16} /> */}
-//               </Button>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Ditto Section */}
-//         <div className="bg-white rounded shadow p-4 mb-4">
-//           <Row className="align-items-center">
-//             <Col md={6}>
-//               <h2 className="d-flex align-items-center">
-//                 1Cliq Ditto
-//                 <span role="img" aria-label="party" className="ms-2">🎉</span>
-//               </h2>
-//               <p className="text-muted">Trade. Replicate. Succeed.</p>
-//               <p className="text-muted">Trading is never gonna be the same again.</p>
-//               <Button variant="danger" className="mt-3">SHOW DITTO PLANS</Button>
-//             </Col>
-//             <Col md={6} className="text-end">
-//               <img src="/placeholder.svg?height=200&width=300" alt="Ditto Illustration" style={{maxWidth: '100%', height: 'auto'}} />
-//             </Col>
-//           </Row>
-//         </div>
-
-//         {/* Footer */}
-//         <footer className="text-center py-3 text-muted">
-//           {/* © 2024 Made With <Heart className="text-danger" size={16} /> */}
-//         </footer>
-//       </Container>
-//     </div>
-//   );
-// }
-
-
-
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Table, Badge, Alert } from 'react-bootstrap';
+// import './ConnectBroker.css'; // Import custom CSS for additional styling
 
 export default function ConnectBroker() {
   const [formData, setFormData] = useState({
     broker: '',
     exchange: 'NSE',
     segment: 'Options',
-    symbol: 'NIFTY',
-    expiryDate: '31-Oct-2024',
-    callStrike: '24300',
+    symbol: ['NIFTY', 'BANKEX'],
+    expiryDate: '07-Nov-2024',
+    callStrike: '24450',
     putStrike: '24300',
-    quantity: '25',
+    quantity: '50',
     productType: 'Margin',
     orderType: 'Market',
     marketProtection: '10',
@@ -185,7 +36,6 @@ export default function ConnectBroker() {
       setMessage('Please select broker to trade');
       return;
     }
-    // Implement buy call logic
     const newPosition = {
       symbolName: `${formData.symbol} ${formData.callStrike} CE`,
       netQty: formData.quantity,
@@ -202,7 +52,6 @@ export default function ConnectBroker() {
       setMessage('Please select broker to trade');
       return;
     }
-    // Implement sell call logic
     setMessage('Sell Call order placed successfully');
   };
 
@@ -259,6 +108,7 @@ export default function ConnectBroker() {
                     onChange={handleInputChange}
                   >
                     <option value="NIFTY">NIFTY</option>
+                    <option value="BANKEX">BANKEX</option>
                   </Form.Select>
                 </Form.Group>
               </Col>

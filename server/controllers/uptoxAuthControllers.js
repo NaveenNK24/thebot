@@ -3,12 +3,13 @@ const axios = require('axios');
 const qs = require('qs');
 const Token = require('../models/upstoxAuthToken')
 const jwt = require('jsonwebtoken');
+const { setUpstoxToken } = require('../middleware/upstoxToken'); // Import the middleware function
 
 
  exports.authUpstox = async (req, res) => {
 
      const redirectUri = encodeURIComponent(process.env.REDIRECT_URI);
-     console.log(redirectUri);
+    //  console.log(redirectUri);
      const authUrl = `https://api.upstox.com/v2/login/authorization/dialog?client_id=${process.env.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code`;
      try {
         const response = await axios.get(authUrl, {
@@ -54,16 +55,20 @@ exports.handleUpstoxCallback = async (req, res) => {
             }
         });
 
-        console.log(response);
+        // console.log(response);
         
          const { access_token } = response.data;
+        //  setUpstoxToken(access_token);
 
         //  console.log(access_token);
         //  const expiresAt = new Date(Date.now() + expires_in * 1000);
 
-        // // Store tokens in the database
-        // const tokenDoc = new Token({ accessToken: access_token });
-        // await tokenDoc.save();
+        // Store tokens in the database
+        const tokenDoc = await Token.findOneAndUpdate(
+            {}, // Find the first document (no filter)
+            { upstoxToken: access_token }, // Update the token
+            { new: true, upsert: true } // Return the updated document and create if it doesn't exist
+        );
         
         res.json({
             access_token,

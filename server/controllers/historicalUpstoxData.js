@@ -24,7 +24,7 @@ exports.historicalData = async (req, res) => {
     //interval -> 1minute, 30minute, day, week, month
     const from = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; 
     const to = new Date().toISOString().split('T')[0];
-    console.log(from,to);
+    // console.log(from,to);
     
 
     // const response = await axios.get(`https://api.upstox.com/v2/historical-candle/${symbol}/${interval}/${to}/${from}`);
@@ -44,7 +44,7 @@ exports.historicalData = async (req, res) => {
         // console.log("Received market data:", data);
         const niftyData = data.feeds?.["NSE_INDEX|Nifty 50"]?.ff?.indexFF?.marketOHLC?.ohlc;
         // const foData = data.feeds?.["NSE_FO|54751"]?.ff?.marketFF?.marketOHLC?.ohlc;
-        const foData =  data.feeds?.["NSE_FO|54751"]?.ff?.marketFF?.marketOHLC?.ohlc;
+        const foData =  data.feeds?.["NSE_FO|50387"]?.ff?.marketFF?.marketOHLC?.ohlc;
         const currentTs = data.currentTs;
 
         // console.log("OHLC FO",foData)
@@ -53,9 +53,9 @@ exports.historicalData = async (req, res) => {
 
         if (niftyData) {
           // Filter for entries with interval "I1"
-        //   const intervalI1Data = niftyData.filter((entry) => entry.interval === "I1");
+          // const intervalI1Data = niftyData.filter((entry) => entry.interval === "I1");
       
-        //   console.log("Filtered interval I1 data:", intervalI1Data);
+          console.log("Filtered interval I1 data:", intervalI1Data);
       
           // Process or store the filtered data as needed
         } else {
@@ -65,32 +65,38 @@ exports.historicalData = async (req, res) => {
             // Filter for entries with interval "I1"
             // const intervalI1Data = foData.filter((entry) => entry.interval === "I1");
 
-            const intervalI1Data = foData
-      .filter((entry) => entry.interval === "I1")
-      .map((entry) => [
-        formatTimestamp(currentTs), // Format the timestamp
-        entry.open,
-        entry.high,
-        entry.low,
-        entry.close,
-        entry.volume,
-        // entry.vol.low, // Adjust for any high/low properties if necessary
-      ]);
-            
-        
-            // console.log("Filtered interval I1 data:", intervalI1Data);
+            const candles1 = foData
+            .filter(entry => entry.interval === "I1") // Filter for interval "I1"
+            .map(entry => {
+                // Convert timestamp to ISO 8601 format
+                const timestamp = new Date(parseInt(entry.ts)).toISOString(); // Convert to ISO format
+                return [
+                    timestamp, // ISO 8601 timestamp
+                    entry.open, // open
+                    entry.high, // high
+                    entry.low,  // low
+                    entry.close, // close
+                    entry.volume, // volume
+                ];
+            });
+        // console.log("candles1",candles1[1]);
+        candles.push(...candles1[1]); 
+        // console.log("candles",candles[10]);
+            // console.log("Filtered interval I1 data:", intervalI11Data);
         
             // Process or store the filtered data as needed
           } else {
             console.log("NSE FO data or interval I1 data not found.");
           }
       });
+
     
     // https://api.upstox.com/v2/historical-candle/intraday/:instrument_key/:interval
 
 
-    const candles = response.data.data?.candles; // Optional chaining in case 'data' or 'candles' is undefined
-console.log(candles);
+    const candles = response.data.data?.candles; 
+    // candles.push(...candles1[1]); // Optional chaining in case 'data' or 'candles' is undefined
+// console.log("candle",candles[0]);
 
     if (candles && Array.isArray(candles)) {
     let cdata = candles.sort((a, b) => {
@@ -106,13 +112,13 @@ console.log(candles);
         
         return {
             symbol: symbol,
-                            time: istTime,
-                            open: parseFloat(open),
-                            high: parseFloat(high),
-                            low: parseFloat(low),
-                            close: parseFloat(close),
-                            volume: parseFloat(volume),
-                        };
+            time: istTime,
+            open: parseFloat(open),
+            high: parseFloat(high),
+            low: parseFloat(low),
+            close: parseFloat(close),
+            volume: parseFloat(volume),
+        };
     });
     // console.log("cdata",cdata.map(c => c.time));
 
@@ -145,6 +151,7 @@ console.log(candles);
     // cdata = calculatePOC_VAH_VAL(cdata) //don't use
     // console.log("cdata",cdata[100]);
     // console.log("cdata p", cdata.filter((d)=> d.doji !== null));
+    console.log("cdata",cdata)
     res.json(cdata);
     } else {
     console.log("Candles is undefined or not an array");

@@ -22,6 +22,9 @@ export const handleUpstoxCallback = createAsyncThunk('upstoxAuth/handleUpstoxCal
   return response.data;
 });
 
+// Selector to get upstoxToken
+
+
 // Auth slice
 const upstoxAuthSlice = createSlice({
   name: 'upstoxAuth',

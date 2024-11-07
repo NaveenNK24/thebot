@@ -35,7 +35,8 @@ useEffect(() => {
       }
     };
   
-    fetchChartData(); // Now calling fetchChartData, not fetchData
+    fetchChartData(); // 
+    
 }, [dispatch,instrument_key]);
 
   

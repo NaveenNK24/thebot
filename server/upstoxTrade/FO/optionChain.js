@@ -3,7 +3,7 @@ const axios = require('axios');
 
 exports.optionChain = async (req, res) => {
 
-    console.log("req",req.params,req.body,  req.query);
+    // console.log("req",req.params,req.body,  req.query);
     const {instrument_key, expiry_date,token} = req.query;
 
     const url = 'https://api.upstox.com/v2/option/chain';
